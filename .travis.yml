@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+    - node
+jobs:
+    fast_finish: true
+install:
+    - npm install -g codecov
+    - npm i -D nyc
+script:
+    # - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+    - npm run test-coverage && npm run codecov
