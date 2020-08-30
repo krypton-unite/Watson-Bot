@@ -1,41 +1,35 @@
-import {instantiate_assistant, instantiate_session, process_message} from '../src/watson.js';
-import chai, { expect } from 'chai';
-import {default as resultA1} from './expected_results/resultA1.json';
-import {default as resultA2} from './expected_results/resultA2.json';
-import {default as resultB1} from './expected_results/resultB1.json';
-import {default as resultB2} from './expected_results/resultB2.json';
-import {default as resultC1} from './expected_results/resultC1.json';
-import {default as resultC2} from './expected_results/resultC2.json';
-import {default as resultD1} from './expected_results/resultD1.json';
-import {default as resultD2} from './expected_results/resultD2.json';
-const should = chai.should();
+import { instantiate_assistant, instantiate_session, process_message } from '../src/watson.js';
+import { expect } from 'chai';
+
+const expect_within = (result, range) => {
+
+}
 
 describe('Should correctly identify offences\' traits in:', async () => {
     let assistant;
-    let session_id; 
+    let session_id;
     before(async () => {
         assistant = instantiate_assistant();
         session_id = await instantiate_session(assistant);
     });
     describe('- Portuguese:', async () => {
-        it('\'Você vai para o inferno!\'', async () => {
-            const result = await process_message(assistant, session_id, 'Você vai para o inferno!');
-            expect(result).to.not.equal(resultA1).and.to.not.equal(resultA2);
+        it('\'Você vai para o céu!\'', async () => {
+            const result = await process_message(assistant, session_id, 'Você é o cara!');
+            expect(result.output.intents[0].intent).to.be.equal('General_Positive_Feedback');
         });
         it('\'Seu imbecil!\'', async () => {
-            const result = await process_message(assistant, session_id, 'Seu imbecil!');
-            expect(result).to.not.equal(resultB1).and.to.not.equal(resultB2);
+            const result = await process_message(assistant, session_id, 'Você me deixa nervoso!');
+            expect(result.output.intents[0].intent).to.be.equal('General_Negative_Feedback');
         });
     });
     describe('- English:', async () => {
         it('\'You will go to hell!\'', async () => {
             const result = await process_message(assistant, session_id, 'You will go to hell!');
-            expect(result).to.not.equal(resultC1).and.to.not.equal(resultC2);
+            expect(result.output.intents).to.eql([]);
         });
         it('\'You dumb!\'', async () => {
             const result = await process_message(assistant, session_id, 'You dumb!');
-            // console.log(JSON.stringify(result, null, 2));
-            expect(result).to.not.equal(resultD1).and.to.not.equal(resultD2);
+            expect(result.output.intents).to.eql([]);
         });
     });
 });

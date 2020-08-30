@@ -38,15 +38,16 @@ const instantiate_session = async (assistant) => {
   return session.result.session_id;
 };
 
-const process_message = (assistant, session_id, message) => {
-  return assistant.message({
+const process_message = async (assistant, session_id, message) => {
+  const res = await assistant.message({
     assistantId: process.env.WATSON_ASSISTANT_ID,
     sessionId: session_id,
     input: {
       'message_type': 'text',
       'text': message
     }
-  }).result;  
+  });
+  return res.result;  
 }
 
 /**
