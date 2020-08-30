@@ -16,8 +16,8 @@
 
 /* Example usage of some features of the Perspective API */
 import dotenv from 'dotenv';
-const AssistantV2 = require('ibm-watson/assistant/v2');
-const { IamAuthenticator } = require('ibm-watson/auth');
+import AssistantV2 from 'ibm-watson/assistant/v2';
+import { IamAuthenticator } from 'ibm-watson/auth';
 
 dotenv.config();
 
@@ -35,68 +35,19 @@ async function analyzeText(text) {
     url: process.env.WATSON_ASSISTANT_V2_URL,
   });
 
-  // assistant.method(params)
-  //   .catch(err => {
-  //     console.log('error:', err);
-  //   });
-
-  assistant.createSession({
+  const session = await assistant.createSession({
     assistantId: process.env.WATSON_ASSISTANT_ID
-  })
-    .then(res => {
-      // console.log(JSON.stringify(res.result, null, 2));
-      console.log(res.result.session_id)
-      assistant.message({
-        assistantId: process.env.WATSON_ASSISTANT_ID,
-        sessionId: res.result.session_id,
-        input: {
-          'message_type': 'text',
-          'text': 'Hello'
-        }
-      })
-        .then(res => {
-          console.log(JSON.stringify(res.result, null, 2));
-        })
-        .catch(err => {
-          console.log(err);
-        });
-
-
-    })
-    .catch(err => {
-      console.log(err);
-    });
-
-
-
-  // const analyzer = new google.commentanalyzer_v1alpha1.Commentanalyzer();
-
-  // This is the format the API expects
-  // const requestedAttributes = {};
-  // for (const key in attributeThresholds) {
-  //   requestedAttributes[key] = {};
-  // }
-
-  // const req = {
-  //   comment: { text: text },
-  //   languages: ['pt'],
-  //   requestedAttributes: requestedAttributes,
-  // };
-
-  // const res = await analyzer.comments.analyze({
-  //   key: process.env.PERSPECTIVE_API_KEY,
-  //   resource: req
-  // });
-
-  // let data = {};
-
-  // for (const key in res['data']['attributeScores']) {
-  //   data[key] =
-  //     res['data']['attributeScores'][key]['summaryScore']['value'] >
-  //     attributeThresholds[key];
-  // }
-  // return data;
-  return text;
+  });
+  const message_result = await assistant.message({
+    assistantId: process.env.WATSON_ASSISTANT_ID,
+    sessionId: session.result.session_id,
+    input: {
+      'message_type': 'text',
+      'text': text
+    }
+  });
+  // console.log(JSON.stringify(message_result.result, null, 2));
+  return message_result.result;
 }
 
 export default analyzeText;

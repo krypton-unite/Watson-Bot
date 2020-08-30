@@ -1,0 +1,17 @@
+{
+    "output": {
+        "intents": [
+            {
+                "intent": "General_Positive_Feedback",
+                "confidence": 0.3473429799079895
+            }
+        ],
+        "entities": [],
+        "generic": [
+            {
+                "response_type": "text",
+                "text": "Show."
+            }
+        ]
+    }
+}

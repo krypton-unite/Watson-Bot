@@ -1,0 +1,17 @@
+{
+    "output": {
+      "intents": [
+        {
+          "intent": "General_Negative_Feedback",
+          "confidence": 0.40410583019256596
+        }
+      ],
+      "entities": [],
+      "generic": [
+        {
+          "response_type": "text",
+          "text": "Puxa vida."
+        }
+      ]
+    }
+  }

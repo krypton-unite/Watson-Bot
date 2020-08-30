@@ -1,0 +1,12 @@
+{
+    "output": {
+        "intents": [],
+        "entities": [],
+        "generic": [
+            {
+                "response_type": "text",
+                "text": "Eu não entendi. Você pode tentar reescrever de outra maneria?"
+            }
+        ]
+    }
+}
