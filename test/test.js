@@ -28,7 +28,7 @@ describe('Should correctly identify offences\' traits in:', async () => {
         });
         it('\'You dumb!\'', async () => {
             const result = await analyzeText('You dumb!');
-            console.log(JSON.stringify(result, null, 2));
+            // console.log(JSON.stringify(result, null, 2));
             expect(result).to.not.equal(resultD1).and.to.not.equal(resultD2);
         });
     });
