@@ -21,33 +21,44 @@ import { IamAuthenticator } from 'ibm-watson/auth';
 
 dotenv.config();
 
-/**
- * Analyze attributes in a block of text
- * @param {string} text - text to analyze
- * @return {json} res - analyzed atttributes
- */
-async function analyzeText(text) {
-  const assistant = new AssistantV2({
+const instantiate_assistant = () => {
+  return new AssistantV2({
     version: process.env.WATSON_ASSISTANT_V2_VERSION,
     authenticator: new IamAuthenticator({
       apikey: process.env.WATSON_IAM_AUTHENTICATOR_API_KEY,
     }),
     url: process.env.WATSON_ASSISTANT_V2_URL,
   });
+};
 
+const instantiate_session = async (assistant) => {
   const session = await assistant.createSession({
     assistantId: process.env.WATSON_ASSISTANT_ID
-  });
-  const message_result = await assistant.message({
+  })
+  return session.result.session_id;
+};
+
+const process_message = (assistant, session_id, message) => {
+  return assistant.message({
     assistantId: process.env.WATSON_ASSISTANT_ID,
-    sessionId: session.result.session_id,
+    sessionId: session_id,
     input: {
       'message_type': 'text',
-      'text': text
+      'text': message
     }
-  });
-  // console.log(JSON.stringify(message_result.result, null, 2));
-  return message_result.result;
+  }).result;  
+}
+
+/**
+ * Analyze attributes in a block of text
+ * @param {string} text - text to analyze
+ * @return {json} res - analyzed atttributes
+ */
+async function analyzeText(text) {
+  const assistant = instantiate_assistant();
+  const session_id = await instantiate_session(assistant);
+  return await process_message(assistant, session_id, text);
 }
 
 export default analyzeText;
+export {instantiate_assistant, instantiate_session, process_message};
