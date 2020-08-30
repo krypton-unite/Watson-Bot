@@ -1,10 +1,6 @@
 import { instantiate_assistant, instantiate_session, process_message } from '../src/watson.js';
 import { expect } from 'chai';
 
-const expect_within = (result, range) => {
-
-}
-
 describe('Should correctly identify offences\' traits in:', async () => {
     let assistant;
     let session_id;
