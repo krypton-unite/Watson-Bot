@@ -1,11 +1,11 @@
 {
-  "name": "perspective_bot",
+  "name": "watson_bot",
   "version": "1.0.0",
   "description": "Discord bot that keeps track of user karma based on the language they use",
   "main": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/krypton-unite/Perspective-Bot.git"
+    "url": "https://github.com/krypton-unite/Watson-Bot.git"
   },
   "scripts": {
     "test": "mocha --require esm",
