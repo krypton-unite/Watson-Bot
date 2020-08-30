@@ -52,8 +52,8 @@ async function analyzeText(text) {
         input: {
           'message_type': 'text',
           'text': 'Hello'
-          }
-        })
+        }
+      })
         .then(res => {
           console.log(JSON.stringify(res.result, null, 2));
         })
