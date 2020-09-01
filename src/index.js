@@ -32,10 +32,8 @@ const assistant = instantiate_assistant();
 const process_this = async (session_id, message) => {
   const result = await process_message(assistant, session_id, message.content);
   console.log(JSON.stringify(result, null, 2));
-  // message.channel.send(JSON.stringify(result, null, 2));
   let generic_output
   for (generic_output of result.output.generic){
-    console.log(generic_output.text);
     message.channel.send(generic_output.text);
   }
 }
