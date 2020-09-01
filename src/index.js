@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 const assistant = instantiate_assistant();
 
 const process_this = async (session_id, message) => {
-  const result = await process_message(assistant, session_id, "Olá, tudo bem?");
+  const result = await process_message(assistant, session_id, message.content);
   console.log(JSON.stringify(result, null, 2));
   // message.channel.send(JSON.stringify(result, null, 2));
   let generic_output
@@ -80,7 +80,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
   client.on('message', async (message) => {
     // Ignore messages that aren't from a guild
     // if (!message.guild) return;
-    if (!message.guild || message.author.bot)
+    if (message.author.bot) return;
 
     // Evaluate attributes of user's message
     console.log('Received a message!')
