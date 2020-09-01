@@ -16,6 +16,7 @@
 
 import mongo_client from './mongo_driver';
 import analyzeText from './watson.js';
+import { instantiate_assistant, instantiate_session, process_message } from '../src/watson.js';
 import dotenv from 'dotenv';
 import Discord from 'discord.js';
 import format from './utils/format.js';
@@ -26,6 +27,19 @@ if (process.env.NODE_ENV !== 'production') {
   console.log(translation.dev_mode);
 }
 
+const assistant = instantiate_assistant();
+
+const process_this = async (session_id, message) => {
+  const result = await process_message(assistant, session_id, "Olá, tudo bem?");
+  console.log(JSON.stringify(result, null, 2));
+  // message.channel.send(JSON.stringify(result, null, 2));
+  let generic_output
+  for (generic_output of result.output.generic){
+    console.log(generic_output.text);
+    message.channel.send(generic_output.text);
+  }
+}
+
 mongo_client.connect_mongo_client(async (err, db_client) => {
 
   if (err) throw err;
@@ -34,13 +48,24 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
   // let offence_records = watson_bot_db.collection('offence_records');
   let robot_memory = watson_bot_db.collection('robot_memory');
 
-  async function evaluateMessage(message) {
-    const userid = message.author.id;
-    return await analyzeText(message.content);
-  }
-
   // Create an instance of a Discord client
   const client = new Discord.Client();
+
+  let session_id;
+
+  let session_callback;
+  client.on('channelCreate', async (dmChannel) => {
+    console.log(format('Channel {0} created with user {1}!', dmChannel.id, dmChannel.recipient.username));
+    session_id = await instantiate_session(assistant);
+    console.log(format("Just created session id is {0}", session_id))
+    if (session_callback){
+      await session_callback(session_id);
+    }
+  })
+
+  client.on('channelDelete', (dmChannel)=> {
+    console.log(format('Channel {0} with user {1} deleted!', dmChannel.id, dmChannel.recipient.username));
+  })
 
   client.on('ready', () => {
     console.log(translation.ready);
@@ -51,67 +76,68 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
   if (robot_creator_record != null){
     robot_creator = robot_creator_record['creator_id'];
   }
+
   client.on('message', async (message) => {
     // Ignore messages that aren't from a guild
     // if (!message.guild) return;
+    if (!message.guild || message.author.bot)
 
     // Evaluate attributes of user's message
-    let evaluation;
-    try {
-      evaluation = await evaluateMessage(message);
-    } catch (err) {
-      console.log(err);
-    }
-    if (evaluation) {
-      // kickBaddie(message.author, message.guild);
-      // message.channel.send(format(translation.kicked_user, message.author.id));
-      return;
-    }
-
-    if (message.content.startsWith('!carma')) {
-      const karma = await getKarma(message.author.id);
-      const explanation = translation.explanation;
-      message.channel.send(karma ? format(translation.your_offences, message.author.id) + karma + '\n\n' + explanation : translation.no_karma_yet);
-    }
-
-    if (message.content.startsWith(translation.adopt_me)) {
-      if (robot_creator == null){
-        robot_creator = message.author.id
-        await robot_memory.insertOne({ _id: 'my_creator', creator_id: robot_creator })
-        message.channel.send(format(translation.just_adopted, robot_creator));
-      }else{
-        message.channel.send(
-          format((robot_creator == message.author.id)? translation.already_adopted : translation.my_creator_is,
-          robot_creator)
-        );
-      }
-    }
-
-    const forgive_command = translation.forgive_me;
-    if (message.author.id == robot_creator){
-      if (message.content.startsWith(forgive_command)) {
-        const karma = await getKarma(message.author.id);
-        if (!karma){
-          message.channel.send(translation.no_need_to_forgive);
-          return;
-        }
-        message.channel.send(translation.forgiven_creator_offences);
-      }
-      const preamble_frag3 = " <@!";
-      const preamble_source = translation.preamble_frag1+translation.preamble_frag2+preamble_frag3;
-      const preamble = new RegExp(preamble_source)
-      const postamble_source = ">";
-      const re = new RegExp(preamble.source + /.*/.source + postamble_source);
-      if (re.test(message.content)) {
-        const user_to_forgive = message.content.match(new RegExp("(?<="+preamble_source+")(.*)(?="+postamble_source+")"))[0]
-        const gender_letter = message.content.match("(?<="+translation.preamble_frag1+")"+translation.preamble_frag2+"(?="+preamble_frag3+"((.*)(?="+postamble_source+")))")[0]
-        message.channel.send(format(translation.forgiven_offences, gender_letter, user_to_forgive));
+    console.log('Received a message!')
+    // console.log(format("Session id is {0}", session_id))
+    
+    if (!session_id){
+      session_callback = async (session_id) => {
+        await process_this(session_id, message)
       }
     }else{
-      if (message.content.startsWith(forgive_command)) {
-        message.channel.send(translation.future_forgiveness);
-      }
+      await process_this(session_id, message);
     }
+
+    // if (message.content.startsWith('!carma')) {
+    //   const karma = await getKarma(message.author.id);
+    //   const explanation = translation.explanation;
+    //   message.channel.send(karma ? format(translation.your_offences, message.author.id) + karma + '\n\n' + explanation : translation.no_karma_yet);
+    // }
+
+    // if (message.content.startsWith(translation.adopt_me)) {
+    //   if (robot_creator == null){
+    //     robot_creator = message.author.id
+    //     await robot_memory.insertOne({ _id: 'my_creator', creator_id: robot_creator })
+    //     message.channel.send(format(translation.just_adopted, robot_creator));
+    //   }else{
+    //     message.channel.send(
+    //       format((robot_creator == message.author.id)? translation.already_adopted : translation.my_creator_is,
+    //       robot_creator)
+    //     );
+    //   }
+    // }
+
+    // const forgive_command = translation.forgive_me;
+    // if (message.author.id == robot_creator){
+    //   if (message.content.startsWith(forgive_command)) {
+    //     const karma = await getKarma(message.author.id);
+    //     if (!karma){
+    //       message.channel.send(translation.no_need_to_forgive);
+    //       return;
+    //     }
+    //     message.channel.send(translation.forgiven_creator_offences);
+    //   }
+    //   const preamble_frag3 = " <@!";
+    //   const preamble_source = translation.preamble_frag1+translation.preamble_frag2+preamble_frag3;
+    //   const preamble = new RegExp(preamble_source)
+    //   const postamble_source = ">";
+    //   const re = new RegExp(preamble.source + /.*/.source + postamble_source);
+    //   if (re.test(message.content)) {
+    //     const user_to_forgive = message.content.match(new RegExp("(?<="+preamble_source+")(.*)(?="+postamble_source+")"))[0]
+    //     const gender_letter = message.content.match("(?<="+translation.preamble_frag1+")"+translation.preamble_frag2+"(?="+preamble_frag3+"((.*)(?="+postamble_source+")))")[0]
+    //     message.channel.send(format(translation.forgiven_offences, gender_letter, user_to_forgive));
+    //   }
+    // }else{
+    //   if (message.content.startsWith(forgive_command)) {
+    //     message.channel.send(translation.future_forgiveness);
+    //   }
+    // }
   });
 
   // Log our bot in using the token from https://discordapp.com/developers/applications/me
