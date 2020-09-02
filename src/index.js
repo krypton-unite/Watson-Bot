@@ -15,7 +15,6 @@
  */
 
 import mongo_client from './mongo_driver';
-import analyzeText from './watson.js';
 import { instantiate_assistant, instantiate_session, process_message } from '../src/watson.js';
 import dotenv from 'dotenv';
 import Discord from 'discord.js';
