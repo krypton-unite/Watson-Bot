@@ -37,6 +37,7 @@ const process_this = async (session_id, message) => {
   }
   let intent
   for (intent of result.output.intents){
+    console.log(format("Intent is: {0}", intent));
     if (intent == "What-is-your-age"){
       message.channel.send("Tenho x anos.");
     }
