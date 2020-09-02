@@ -88,21 +88,21 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
         if (robot_birthday == undefined){
           message.channel.send(translation.undefined_birthday);
         }else{
-          message.channel.send(format("Minha idade é {0}", moment.duration(moment().diff(robot_birthday)).humanize()));
+          message.channel.send(format(translation.age_response, moment.duration(moment().diff(robot_birthday)).humanize()));
         }
       }
       if (intent.intent == "What-is-your-birthday"){
         if (robot_birthday == undefined){
           message.channel.send(translation.undefined_birthday);
         }else{
-          message.channel.send(format("Minha data de nascimento é {0}", robot_birthday.format("lll")));
+          message.channel.send(format(translation.birthday_response, robot_birthday.format("lll")));
         }
       }
       if (intent.intent == "Who-is-your-creator"){
         if (robot_creator == undefined){
           message.channel.send(translation.undefined_creator);
         }else{
-          message.channel.send(format("Meu criador é <@!{0}>", robot_creator));
+          message.channel.send(format(translation.creator_response, robot_creator));
         }
       }
     }
