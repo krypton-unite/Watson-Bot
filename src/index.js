@@ -35,6 +35,12 @@ const process_this = async (session_id, message) => {
   for (generic_output of result.output.generic){
     message.channel.send(generic_output.text);
   }
+  let intent
+  for (intent of result.output.intents){
+    if (intent == "What-is-your-age"){
+      message.channel.send("Tenho x anos.");
+    }
+  }
 }
 
 mongo_client.connect_mongo_client(async (err, db_client) => {
