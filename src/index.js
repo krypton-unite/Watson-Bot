@@ -98,6 +98,13 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
           message.channel.send(format("Minha data de nascimento é {0}", robot_birthday.format("lll")));
         }
       }
+      if (intent.intent == "Who-is-your-creator"){
+        if (robot_creator == undefined){
+          message.channel.send(translation.undefined_creator);
+        }else{
+          message.channel.send(format("Meu criador é <@!{0}>", robot_creator));
+        }
+      }
     }
   }
 
