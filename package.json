@@ -15,7 +15,8 @@
     "prod:build": "webpack --config webpack.prod.js",
     "dev:watch": "webpack --config webpack.dev.js --watch",
     "dev:nodemon": "nodemon dist/app.bundle.js",
-    "start": "npm-run-all --parallel dev:*",
+    "dev:start": "npm-run-all --parallel dev:*",
+    "start": "npm run prod:start",
     "heroku:logs": "heroku logs --tail",
     "heroku:deploy": "git push heroku master"
   },
