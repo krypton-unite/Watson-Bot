@@ -1,4 +1,5 @@
 {
+    "language": "pt-br",
     "dev_mode" : "Parece que estamos no modo de desenvolvimento!",
     "jurk" : "Era um babaca",
     "couldnt_kick" : "Não pude chutar o usuário {0}: {1}",
@@ -9,6 +10,8 @@
     "your_offences" : "Suas ofensas, <@{0}>:\n\n",
     "no_karma_yet" : "Sem carma ainda!",
     "adopt_me" : "!adote-me como seu criador",
+    "set_birthday" : "!setar data de nascimento",
+    "undefined_birthday": "Minha data de nascimento está indefinida",
     "just_adopted" : "Acabo de te adotar como meu criador, <@{0}>!",
     "already_adopted" : "Você já foi adotado como meu criador, <@{0}>!",
     "my_creator_is" : "Meu criador é o <@{0}>!",

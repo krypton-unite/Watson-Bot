@@ -20,6 +20,9 @@ import dotenv from 'dotenv';
 import Discord from 'discord.js';
 import format from './utils/format.js';
 import {default as translation} from '../assets/translation.pt.json';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+moment.locale(translation.language);
 dotenv.config();
 
 if (process.env.NODE_ENV !== 'production') {
@@ -27,22 +30,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const assistant = instantiate_assistant();
-
-const process_this = async (session_id, message) => {
-  const result = await process_message(assistant, session_id, message.content);
-  console.log(JSON.stringify(result, null, 2));
-  let generic_output
-  for (generic_output of result.output.generic){
-    message.channel.send(generic_output.text);
-  }
-  let intent
-  for (intent of result.output.intents){
-    console.log(format("Intent is: {0}", intent));
-    if (intent == "What-is-your-age"){
-      message.channel.send("Tenho x anos.");
-    }
-  }
-}
 
 mongo_client.connect_mongo_client(async (err, db_client) => {
 
@@ -81,6 +68,39 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     robot_creator = robot_creator_record['creator_id'];
   }
 
+  let robot_birthday_record = await robot_memory.findOne({ _id: 'my_birthday' });
+  let robot_birthday;
+  if (robot_birthday_record != null){
+    robot_birthday = moment(robot_birthday_record['timestamp']);
+  }  
+
+  const process_this = async (session_id, message) => {
+    const result = await process_message(assistant, session_id, message.content);
+    console.log(JSON.stringify(result, null, 2));
+    let generic_output
+    for (generic_output of result.output.generic){
+      message.channel.send(generic_output.text);
+    }
+    console.log(JSON.stringify(result.output.intents, null, 2))
+    let intent
+    for (intent of result.output.intents){
+      if (intent.intent == "What-is-your-age"){
+        if (robot_birthday == undefined){
+          message.channel.send(translation.undefined_birthday);
+        }else{
+          message.channel.send(format("Minha idade é {0}", moment.duration(moment().diff(robot_birthday)).humanize()));
+        }
+      }
+      if (intent.intent == "What-is-your-birthday"){
+        if (robot_birthday == undefined){
+          message.channel.send(translation.undefined_birthday);
+        }else{
+          message.channel.send(format("Minha data de nascimento é {0}", robot_birthday.format("lll")));
+        }
+      }
+    }
+  }
+
   client.on('message', async (message) => {
     // Ignore messages that aren't from a guild
     // if (!message.guild) return;
@@ -104,19 +124,25 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     //   message.channel.send(karma ? format(translation.your_offences, message.author.id) + karma + '\n\n' + explanation : translation.no_karma_yet);
     // }
 
-    // if (message.content.startsWith(translation.adopt_me)) {
-    //   if (robot_creator == null){
-    //     robot_creator = message.author.id
-    //     await robot_memory.insertOne({ _id: 'my_creator', creator_id: robot_creator })
-    //     message.channel.send(format(translation.just_adopted, robot_creator));
-    //   }else{
-    //     message.channel.send(
-    //       format((robot_creator == message.author.id)? translation.already_adopted : translation.my_creator_is,
-    //       robot_creator)
-    //     );
-    //   }
-    // }
+    if (message.content.startsWith(translation.adopt_me)) {
+      if (robot_creator == null){
+        robot_creator = message.author.id
+        await robot_memory.insertOne({ _id: 'my_creator', creator_id: robot_creator })
+        message.channel.send(format(translation.just_adopted, robot_creator));
+      }else{
+        message.channel.send(
+          format((robot_creator == message.author.id)? translation.already_adopted : translation.my_creator_is,
+          robot_creator)
+        );
+      }
+    }
 
+    if (message.author.id == robot_creator){
+      if (message.content.startsWith(translation.set_birthday)) {
+        const date = new Date();
+        await robot_memory.insertOne({ _id: 'my_birthday', timestamp: + date })
+      }
+    }
     // const forgive_command = translation.forgive_me;
     // if (message.author.id == robot_creator){
     //   if (message.content.startsWith(forgive_command)) {

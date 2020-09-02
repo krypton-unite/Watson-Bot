@@ -1,4 +1,5 @@
 {
+    "language": "default",
     "dev_mode" : "Looks like we are in development mode!",
     "jurk" : "It was a jurk",
     "couldnt_kick" : "Couldn't kick the user {0}: {1}",
@@ -9,6 +10,8 @@
     "your_offences" : "Your offences, <@{0}>:\n\n",
     "no_karma_yet" : "No karma yet!",
     "adopt_me" : "!adopt me as your creator",
+    "set_birthday" : "!set birthday",
+    "undefined_birthday": "My birthday is undefinid",
     "just_adopted" : "I just adopted you as my creator, <@{0}>!",
     "already_adopted" : "You were already adopted as my creator, <@{0}>!",
     "my_creator_is" : "My creator is <@{0}>!",
