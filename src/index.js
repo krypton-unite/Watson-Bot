@@ -81,7 +81,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     if (message.author.bot) return;
 
     // Evaluate attributes of user's message
-    console.log('Received a message!')
+    console.log(format('Received a message: {0}', message.content))
     // console.log(format("Session id is {0}", session_id))
     
     if (!session_id){
