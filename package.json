@@ -17,6 +17,7 @@
     "dev:nodemon": "nodemon dist/app.bundle.js",
     "dev_start": "npm-run-all --parallel dev:*",
     "start": "npm run prod:start",
+    "build": "npm run prod:build",
     "heroku:logs": "heroku logs --tail",
     "heroku:deploy": "git push heroku master"
   },
