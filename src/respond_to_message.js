@@ -22,6 +22,7 @@ const respond_to_message = async (assistant, session_id, message, robot_data) =>
                 format(translation.birthday_response, robot_data.birthday.format("lll")))
         }
         if (intent.intent == "Which-is-your-zodiac_sign") {
+            console.log(JSON.stringify(zodiac.getSignByDate({ day: 22, month: 6 }), null, 2));
             message.channel.send(robot_data.birthday == undefined ? translation.undefined_birthday :
                 format(translation.zodiac_sign_response, zodiac.getSignByDate({ day: 22, month: 6 })))
         }
