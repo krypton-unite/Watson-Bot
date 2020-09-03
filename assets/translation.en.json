@@ -15,6 +15,7 @@
     "undefined_creator": "I don't know yet who is my creator...",
     "birthday_response": "My birth date is {0}",
     "creator_response": "My creator is <@!{0}>",
+    "zodiac_sign_response": "My zodiac sign is {0}",
     "age_response": "My age is {0}",
     "received_message": "Received a message: {0}",
     "just_deleted_session": "Just deleted session id is {0}",

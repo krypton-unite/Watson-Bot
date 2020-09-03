@@ -2,6 +2,7 @@ import { process_message } from '../src/watson.js';
 import {translation} from './translation.js';
 import format from './utils/format.js';
 import moment from 'moment';
+const zodiac = require('zodiac-signs')(translation.language);
 
 const respond_to_message = async (assistant, session_id, message, robot_data) => {
     const result = await process_message(assistant, session_id, message.content);
@@ -19,6 +20,10 @@ const respond_to_message = async (assistant, session_id, message, robot_data) =>
         if (intent.intent == "What-is-your-birthday") {
             message.channel.send(robot_data.birthday == undefined ? translation.undefined_birthday :
                 format(translation.birthday_response, robot_data.birthday.format("lll")))
+        }
+        if (intent.intent == "What-is-your-zodiac_sign") {
+            message.channel.send(robot_data.birthday == undefined ? translation.undefined_birthday :
+                format(translation.zodiac_sign_response, zodiac.getSignByDate({ day: 22, month: 6 })))
         }
         if (intent.intent == "Who-is-your-creator") {
             message.channel.send(robot_data.creator == undefined ? translation.undefined_creator :
