@@ -84,13 +84,12 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
 
     if (!session_details) {
       session_details = await get_session_details(assistant);
-      let interval_id;
       const scheduled_function = async () => {
         await delete_session(assistant, session_details.id);
         session_details = undefined;
         console.log(format(translation.just_deleted_session, session_details.id))
       };
-      interval_id = interval(scheduled_function, moment.duration({ minutes: 4, seconds: 50 }).asMilliseconds(), { iterations: 1 });
+      interval(scheduled_function, moment.duration({ minutes: 4, seconds: 50 }).asMilliseconds(), { iterations: 1 });
       console.log(format(translation.just_created_session, session_details.id))
     } else {
       session_details.timestamp = moment();
