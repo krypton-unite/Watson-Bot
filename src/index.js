@@ -85,9 +85,10 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     if (!session_details) {
       session_details = await get_session_details(assistant);
       const scheduled_function = async () => {
-        await delete_session(assistant, session_details.id);
+        const id_to_delete = session_details.id;
+        await delete_session(assistant, id_to_delete);
         session_details = undefined;
-        console.log(format(translation.just_deleted_session, session_details.id))
+        console.log(format(translation.just_deleted_session, id_to_delete))
       };
       interval(scheduled_function, moment.duration({ minutes: 4, seconds: 50 }).asMilliseconds(), { iterations: 1 });
       console.log(format(translation.just_created_session, session_details.id))
