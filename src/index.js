@@ -50,10 +50,14 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     console.log(format('Channel {0} created with user {1}!', dmChannel.id, dmChannel.recipient.username));
   })
 
+  const delete_session_wrapper = async () => {
+    await delete_session(assistant, session_details.id);
+    session_details = undefined;
+  };
+
   client.on('channelDelete', async (dmChannel) => {
     if (session_details) {
-      await delete_session(assistant, session_details.id);
-      session_details = undefined;
+      await delete_session_wrapper();
     }
     console.log(format('Channel {0} with user {1} deleted!', dmChannel.id, dmChannel.recipient.username));
   })
@@ -86,8 +90,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
       session_details = await get_session_details(assistant);
       const scheduled_function = async () => {
         const id_to_delete = session_details.id;
-        await delete_session(assistant, id_to_delete);
-        session_details = undefined;
+        await delete_session_wrapper();
         console.log(format(translation.just_deleted_session, id_to_delete))
       };
       interval(scheduled_function, moment.duration({ minutes: 4, seconds: 50 }).asMilliseconds(), { iterations: 1 });
