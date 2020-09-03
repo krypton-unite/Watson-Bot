@@ -1,0 +1,1 @@
+export { default as translation } from '../assets/translation.pt.json';

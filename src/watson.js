@@ -18,6 +18,11 @@
 import dotenv from 'dotenv';
 import AssistantV2 from 'ibm-watson/assistant/v2';
 import { IamAuthenticator } from 'ibm-watson/auth';
+import ExtendableError from './ExtendableError';
+import moment from 'moment';
+
+class SessionCreationError extends ExtendableError {}
+class SessionDeleteError extends ExtendableError {}
 
 dotenv.config();
 
@@ -32,11 +37,36 @@ const instantiate_assistant = () => {
 };
 
 const instantiate_session = async (assistant) => {
-  const session = await assistant.createSession({
+  const res = await assistant.createSession({
     assistantId: process.env.WATSON_ASSISTANT_ID
   })
-  return session.result.session_id;
+  return res;
 };
+
+const get_session_details = async (assistant) => {
+  const res = await instantiate_session(assistant);
+  switch (res.status){
+  case 201:
+    return {id: res.result.session_id, timestamp: moment()};
+  default:
+    throw new SessionCreationError("Couldn't create session");
+  }
+}
+
+const raw_delete_session = async (assistant, session_id) => {
+  const res = await assistant.deleteSession({
+    assistantId: process.env.WATSON_ASSISTANT_ID,
+    sessionId: session_id,
+  })
+  return res;
+};
+
+const delete_session = async (assistant, session_id) => {
+  const res = await raw_delete_session(assistant, session_id);
+  if (res.status != 200){
+    throw new SessionDeleteError("Couldn't delete session");
+  }
+}
 
 const process_message = async (assistant, session_id, message) => {
   const res = await assistant.message({
@@ -62,4 +92,4 @@ async function analyzeText(text) {
 }
 
 export default analyzeText;
-export {instantiate_assistant, instantiate_session, process_message};
+export {instantiate_assistant, instantiate_session, get_session_details, raw_delete_session, delete_session, process_message};
