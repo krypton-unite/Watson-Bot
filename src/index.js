@@ -47,7 +47,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
 
   // let session_callback;
   client.on('channelCreate', async (dmChannel) => {
-    console.log(format('Channel {0} created with user {1}!', dmChannel.id, dmChannel.recipient.username));
+    console.log(format(translation.just_created_channel, dmChannel.id, dmChannel.recipient.username));
   })
 
   const delete_session_wrapper = async () => {

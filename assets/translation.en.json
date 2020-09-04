@@ -18,6 +18,7 @@
     "zodiac_sign_response": "My zodiac sign is {0}",
     "age_response": "My age is {0}",
     "received_message": "Received a message: {0}",
+    "just_created_channel": "Channel {0} created with user {1}!",
     "just_deleted_session": "Just deleted session id is {0}",
     "just_created_session": "Just created session id is {0}",
     "just_adopted" : "I just adopted you as my creator, <@{0}>!",
