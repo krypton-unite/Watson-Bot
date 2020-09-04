@@ -19,6 +19,7 @@
     "age_response": "Minha idade é {0}",
     "received_message": "Received a message: {0}",
     "just_created_channel": "Canal {0} criado com o usuário {1}!",
+    "just_deleted_channel": "Canal {0} com o usuário {1} apagado!",
     "just_deleted_session": "A id da sessão que acabou de ser apagada é {0}",
     "just_created_session": "A id da sessão que acabou de ser criada é {0}",
     "just_adopted" : "Acabo de te adotar como meu criador, <@{0}>!",

@@ -59,7 +59,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
     if (session_details) {
       await delete_session_wrapper();
     }
-    console.log(format('Channel {0} with user {1} deleted!', dmChannel.id, dmChannel.recipient.username));
+    console.log(format(translation.just_deleted_channel, dmChannel.id, dmChannel.recipient.username));
   })
 
   client.on('ready', () => {
@@ -80,8 +80,7 @@ mongo_client.connect_mongo_client(async (err, db_client) => {
 
   client.on('message', async (message) => {
     // Ignore messages that aren't from a guild
-    // if (!message.guild) return;
-    if (message.author.bot) return;
+    if (message.author.bot | message.guild) return;
 
     // Evaluate attributes of user's message
     console.log(format(translation.received_message, message.content))
