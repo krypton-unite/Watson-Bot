@@ -11,7 +11,7 @@
     "test": "mocha --require esm --timeout 5000",
     "test-coverage": "nyc mocha --require esm --report lcovonly -- -R spec",
     "codecov": "codecov --disable=gcov",
-    "prod:start": "node dist/app.bundle.js",
+    "prod:start": "pm2 start dist/app.bundle.js",
     "prod:build": "webpack --config webpack.prod.js",
     "dev:watch": "webpack --config webpack.dev.js --watch",
     "dev:nodemon": "nodemon dist/app.bundle.js",
