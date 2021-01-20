@@ -1,6 +1,6 @@
 {
   "name": "watson_bot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Discord bot that keeps track of user karma based on the language they use",
   "main": "src/index.js",
   "repository": {
@@ -11,7 +11,7 @@
     "test": "mocha --require esm --timeout 5000",
     "test-coverage": "nyc mocha --require esm --report lcovonly -- -R spec",
     "codecov": "codecov --disable=gcov",
-    "prod:start": "pm2 start dist/app.bundle.js",
+    "prod:start": "pm2 start dist/$npm_package_name.js",
     "prod:build": "webpack --config webpack.prod.js",
     "dev:watch": "webpack --config webpack.dev.js --watch",
     "dev:nodemon": "nodemon dist/app.bundle.js",
@@ -30,6 +30,7 @@
     "interval-promise": "^1.4.0",
     "moment": "^2.29.1",
     "mongodb": "^3.6.3",
+    "pm2": "^4.5.1",
     "zodiac-signs": "^1.1.0"
   },
   "devDependencies": {
