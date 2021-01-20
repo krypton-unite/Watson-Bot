@@ -4,7 +4,8 @@ module.exports = {
   apps : [{
     name: pkg_name,
     script: "./dist/"+pkg_name+".js",
-    // instances: "max",
+    instances : "max",
+    exec_mode : "cluster",
     env: {
       NODE_ENV: "development",
     },
